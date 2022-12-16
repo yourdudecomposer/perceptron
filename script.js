@@ -1,47 +1,51 @@
- let weights = [];
- for (let i = 0; i < 3; i++) {
+let weights = [];
+for (let i = 0; i < 5; i++) {
     weights.push(Math.random())
 }
 
-function activate(a) {
-    return a > 0 ? 1 : 0;
+function whatPick(arr, weights) {
+   let index = weights.indexOf(Math.max(...weights))
+   return arr[index]
 }
 
-function RightProp(inputs) {
-    let res = 0;
-    for (let i = 0; i < 3; i++)
-        res += weights[i] * inputs[i];
-    return res;
-}
+function train(trainingData, expResult, weights) {
 
-function train(data, exp) {
-
-    const LR = 0.1, EPOCH = 50;
-    let error;
-
+    const LR = 0.1, EPOCH = 5;
     for (let i = 0; i < EPOCH; i++) {
-
-        for (let j = 0; j < 4; j++) {
-
-            error = exp[j] - activate(RightProp(data[j]));
-
-            for (let k = 0; k < weights.length; k++) {
-                weights[k] += LR * error * data[j][k];
+        // console.log(weights)
+        for (let j = 0; j < trainingData.length; j++) {
+            let tempRes = whatPick(trainingData[j],weights)
+            let error = expResult[j] - tempRes
+            for (let k = 0; k < trainingData[j].length; k++) {
+                weights[k] += LR * error * trainingData[j][k];
             }
         }
     }
 }
 
-let trainingData = [[0, 0, 1], [0, 1, 1], [1, 0, 1], [0, 1, 0]];
-let expResults = [0, 0, 1, 0]
+function makeData(len){
+    let arr = []
+    for (let i = 0; i < len; i++) {
+        arr[i] = [...new Array(5)]
+        .map(() => Math.floor(Math.random() * 10))
+    }
+    return arr
+}
+let trainingData = makeData(15);
 
-
-train(trainingData, expResults)
-
-for (i = 0; i < 3; i++) {
-    weights[i] = (weights[i] > 0) ? weights[i] : 0;
+function makeExp(arr){
+return trainingData.map((el) => el[3])
 }
 
-const newArr = [0, 1, 0];
+let expResult = makeExp(15);
 
-console.log(activate(RightProp(newArr)))
+console.log(weights)
+
+train(trainingData, expResult, weights)
+
+console.log(weights)
+
+
+const newArr = [48, 1, 0,67,4];
+
+console.log((whatPick(newArr,weights)))
